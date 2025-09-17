@@ -6,6 +6,7 @@
 !config-template.yaml
 
 *.json
+!api-wrapper/package.json
 *.db
 *.db-shm
 *.db-wal
