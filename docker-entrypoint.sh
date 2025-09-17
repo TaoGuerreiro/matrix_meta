@@ -46,7 +46,7 @@ bridge:
     displayname_template: '{displayname} (Meta)'
 
     permissions:
-        '*': user
+        "*": "user"
 
     encryption:
         allow: false
