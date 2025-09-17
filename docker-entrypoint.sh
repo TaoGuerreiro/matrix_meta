@@ -9,67 +9,75 @@ if [ -z "$POSTGRESQL_ADDON_URI" ]; then
     exit 1
 fi
 
-# Générer le fichier de configuration depuis le template
+# Générer le fichier de configuration
 echo "📝 Génération de la configuration..."
 
 # Générer des tokens aléatoires
 AS_TOKEN=$(openssl rand -hex 32)
 HS_TOKEN=$(openssl rand -hex 32)
 
-cat > /app/config.yaml << EOF
-# Configuration mautrix-meta
+cat > /app/config.yaml << 'CONFIG_END'
 homeserver:
     address: http://localhost:8008
     domain: localhost
 
 appservice:
-    id: mautrix-meta
-    as_token: $AS_TOKEN
-    hs_token: $HS_TOKEN
+    id: meta
+    as_token: REPLACE_AS_TOKEN
+    hs_token: REPLACE_HS_TOKEN
+
     address: http://0.0.0.0:29318
     hostname: 0.0.0.0
     port: 29318
 
     database:
         type: postgres
-        uri: ${POSTGRESQL_ADDON_URI}
+        uri: REPLACE_DB_URI
         max_open_conns: 20
         max_idle_conns: 2
 
     bot:
         username: metabot
         displayname: Meta Bridge Bot
-        avatar: mxc://localhost/avatar
 
 bridge:
-    username_template: meta_{userid}
-    displayname_template: '{displayname} (Meta)'
+    username_template: "meta_{userid}"
+    displayname_template: "{displayname} (Meta)"
 
+    # Permissions configuration
     permissions:
-        "*": "user"
+        "*": user
+        "@admin:localhost": admin
 
+    # Encryption settings
     encryption:
         allow: false
         default: false
         require: false
-        appservice: false
 
+    # Other bridge settings
     sync_direct_chat_list: true
     initial_chat_sync: 10
     message_status_events: true
     delivery_receipts: true
-    disable_bridge_notices: false
 
 meta:
-    mode: ${MAUTRIX_MODE:-both}
+    mode: REPLACE_MODE
     ig_e2ee: false
 
 logging:
-    min_level: ${LOG_LEVEL:-info}
+    min_level: REPLACE_LOG_LEVEL
     writers:
         - type: stdout
           format: pretty-colored
-EOF
+CONFIG_END
+
+# Remplacer les variables
+sed -i "s|REPLACE_AS_TOKEN|$AS_TOKEN|g" /app/config.yaml
+sed -i "s|REPLACE_HS_TOKEN|$HS_TOKEN|g" /app/config.yaml
+sed -i "s|REPLACE_DB_URI|${POSTGRESQL_ADDON_URI}|g" /app/config.yaml
+sed -i "s|REPLACE_MODE|${MAUTRIX_MODE:-both}|g" /app/config.yaml
+sed -i "s|REPLACE_LOG_LEVEL|${LOG_LEVEL:-info}|g" /app/config.yaml
 
 echo "✅ Configuration générée"
 
