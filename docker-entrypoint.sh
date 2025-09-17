@@ -41,8 +41,8 @@ appservice:
         displayname: Meta Bridge Bot
 
 bridge:
-    username_template: "meta_{userid}"
-    displayname_template: "{displayname} (Meta)"
+    username_template: "meta_{{.}}"
+    displayname_template: "{{or .DisplayName .Username}} (Meta)"
 
     # Permissions configuration
     permissions:
