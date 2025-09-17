@@ -2,7 +2,7 @@
 FROM dock.mau.dev/mautrix/meta:latest
 
 # Installation des dépendances supplémentaires
-RUN apk add --no-cache nodejs npm curl bash
+RUN apk add --no-cache nodejs npm curl bash openssl
 
 # Répertoire de travail
 WORKDIR /app

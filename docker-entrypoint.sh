@@ -12,6 +12,10 @@ fi
 # Générer le fichier de configuration depuis le template
 echo "📝 Génération de la configuration..."
 
+# Générer des tokens aléatoires
+AS_TOKEN=$(openssl rand -hex 32)
+HS_TOKEN=$(openssl rand -hex 32)
+
 cat > /app/config.yaml << EOF
 # Configuration mautrix-meta SANS Matrix et SANS encryption
 homeserver:
@@ -21,8 +25,8 @@ homeserver:
     
 appservice:
     id: mautrix-meta
-    as_token: $(openssl rand -hex 32)
-    hs_token: $(openssl rand -hex 32)
+    as_token: $AS_TOKEN
+    hs_token: $HS_TOKEN
     address: http://0.0.0.0:29318
     hostname: 0.0.0.0
     port: 29318
