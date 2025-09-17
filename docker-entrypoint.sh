@@ -21,10 +21,12 @@ homeserver:
     
 appservice:
     id: mautrix-meta
+    as_token: $(openssl rand -hex 32)
+    hs_token: $(openssl rand -hex 32)
     address: http://0.0.0.0:29318
     hostname: 0.0.0.0
     port: 29318
-    
+
     database:
         type: postgres
         uri: ${POSTGRESQL_ADDON_URI}
