@@ -54,10 +54,10 @@ bridge:
         default: false
         require: false
         appservice: false
-        
+
     # Permissions (tous les utilisateurs)
     permissions:
-        "*": user
+        "*": "user"
         
     # Options de synchronisation
     sync_direct_chat_list: true
