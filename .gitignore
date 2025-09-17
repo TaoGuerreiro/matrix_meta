@@ -3,6 +3,7 @@
 *.yaml
 !.pre-commit-config.yaml
 !example-config.yaml
+!config-template.yaml
 
 *.json
 *.db
@@ -14,3 +15,23 @@
 /mautrix-meta
 /mautrix-meta-v2
 /start
+
+# Configuration locale Clever Cloud
+.clever-config
+.clever.json
+clever-*.log
+
+# Données sensibles
+crypto-store/
+crypto-store.json
+element-keys.txt
+beeper-token.txt
+api-tokens.txt
+
+# Node.js
+node_modules/
+package-lock.json
+yarn.lock
+
+# Test API
+test-results/

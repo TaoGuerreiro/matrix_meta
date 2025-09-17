@@ -1,0 +1,48 @@
+# mautrix-meta configuration template for Clever Cloud
+# All variables are injected at runtime via docker-entrypoint.sh
+
+homeserver:
+  address: ${HOMESERVER_ADDRESS}
+  domain: ${HOMESERVER_DOMAIN}
+
+appservice:
+  address: http://0.0.0.0:29319
+  hostname: 0.0.0.0
+  port: 29319
+  database: ${DATABASE_URL}
+
+  bot:
+    username: metabot
+    displayname: Meta Bridge Bot
+
+bridge:
+  username_template: "meta_{{.}}"
+  displayname_template: "{{or .DisplayName .Username}} (Meta)"
+
+  encryption:
+    allow: false
+    default: false
+    require: false
+
+  permissions:
+    "*": user
+
+logging:
+  console:
+    colored_logs: false
+    json_logs: true
+
+  file_name_format: ""
+  file_date_format: ""
+  file_mode: ""
+  file_json: false
+
+  print_level: ${LOG_LEVEL}
+  print_json: true
+
+meta:
+  mode: ${MAUTRIX_MODE}
+  ig_e2ee: false
+
+  proxy: null
+  get_proxy_from_env: false

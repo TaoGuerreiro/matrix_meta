@@ -1,20 +1,33 @@
-FROM golang:1-alpine3.22 AS builder
+# Dockerfile optimisé pour Clever Cloud - mautrix-meta SANS encryption
+FROM dock.mau.dev/mautrix/meta:latest
 
-RUN apk add --no-cache git ca-certificates build-base su-exec olm-dev
+# Installation des dépendances supplémentaires
+RUN apk add --no-cache nodejs npm curl bash
 
-COPY . /build
-WORKDIR /build
-RUN ./build.sh
+# Répertoire de travail
+WORKDIR /app
 
-FROM alpine:3.22
+# Copier les fichiers nécessaires
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY config-template.yaml /app/config-template.yaml
+COPY api-wrapper/ /app/api-wrapper/
 
-ENV UID=1337 \
-    GID=1337
+# Installer les dépendances Node.js pour l'API wrapper
+WORKDIR /app/api-wrapper
+RUN npm install --production
 
-RUN apk add --no-cache ffmpeg su-exec ca-certificates olm bash jq yq-go curl
+# Retour au répertoire principal
+WORKDIR /app
 
-COPY --from=builder /build/mautrix-meta /usr/bin/mautrix-meta
-COPY --from=builder /build/docker-run.sh /docker-run.sh
-VOLUME /data
+# Permissions
+RUN chmod +x /docker-entrypoint.sh
 
-CMD ["/docker-run.sh"]
+# Port pour Clever Cloud
+EXPOSE 8080
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:8080/health || exit 1
+
+# Point d'entrée
+ENTRYPOINT ["/docker-entrypoint.sh"]
