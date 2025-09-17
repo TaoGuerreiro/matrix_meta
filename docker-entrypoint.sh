@@ -17,12 +17,11 @@ AS_TOKEN=$(openssl rand -hex 32)
 HS_TOKEN=$(openssl rand -hex 32)
 
 cat > /app/config.yaml << EOF
-# Configuration mautrix-meta SANS Matrix et SANS encryption
+# Configuration mautrix-meta
 homeserver:
-    # Serveur Matrix factice (non utilisé en mode direct)
     address: http://localhost:8008
     domain: localhost
-    
+
 appservice:
     id: mautrix-meta
     as_token: $AS_TOKEN
@@ -36,38 +35,35 @@ appservice:
         uri: ${POSTGRESQL_ADDON_URI}
         max_open_conns: 20
         max_idle_conns: 2
-        
-# Configuration Meta (Instagram/Messenger/WhatsApp)
-meta:
-    mode: ${MAUTRIX_MODE:-both}
-    # IMPORTANT: Désactiver le chiffrement Instagram
-    ig_e2ee: false
-    
-    # Compte Meta
-    username: ${META_USERNAME:-}
-    password: ${META_PASSWORD:-}
-    
+
+    bot:
+        username: metabot
+        displayname: Meta Bridge Bot
+        avatar: mxc://localhost/avatar
+
 bridge:
-    # IMPORTANT: Désactiver complètement le chiffrement Matrix
+    username_template: meta_{userid}
+    displayname_template: '{displayname} (Meta)'
+
+    permissions:
+        '*': user
+
     encryption:
         allow: false
         default: false
         require: false
         appservice: false
 
-    # Permissions (tous les utilisateurs)
-    permissions:
-        "*": "user"
-        
-    # Options de synchronisation
     sync_direct_chat_list: true
     initial_chat_sync: 10
     message_status_events: true
     delivery_receipts: true
-    
-    # Options pour messages en clair
     disable_bridge_notices: false
-    
+
+meta:
+    mode: ${MAUTRIX_MODE:-both}
+    ig_e2ee: false
+
 logging:
     min_level: ${LOG_LEVEL:-info}
     writers:
